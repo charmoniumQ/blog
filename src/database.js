@@ -1,5 +1,4 @@
 var fs = require("fs");
-var encoder = require('node-html-encoder')
 
 Array.prototype.contains = function(element){
     return this.indexOf(element) > -1;
