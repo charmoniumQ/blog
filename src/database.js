@@ -5,6 +5,10 @@ Array.prototype.contains = function(element){
     return this.indexOf(element) > -1;
 };
 
+Array.prototype.clone = function() {
+	return this.slice(0);
+};
+
 var articleInfos = {
 	  "titles": []
 	, "dates": []
@@ -36,9 +40,33 @@ module.exports.getTags = function () {
 			}
 		}
 	}
-	return uniqueTags
+	test();
+	return uniqueTags.clone();
 };
 
+function test() {
+	console.log(articleInfos.titles + ' ' + articles.length);
+}
+
+module.exports.test = test;
+
 module.exports.getAll = function() {
-	return articles;
+	console.log('getAll():');
+	test();
+	console.log();
+	return articles.clone();
+};
+
+module.exports.getTag = function(tag) {
+	console.log('getTag(' + tag + '):');
+	test();
+	articlesWithTag = []
+	for (var i = 0; i < articleInfos.tags.length; i++) {
+		if (articleInfos.tags[i].contains(tag)) {
+			articlesWithTag.push(articles[i]);
+		}
+	}
+	test();
+	console.log();
+	return articlesWithTag.clone();
 };
