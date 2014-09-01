@@ -3,6 +3,7 @@ var express = require('express');
 // TODO:
 //   Error handling
 //   Logging
+//   Favicon
 
 var app = express();
 

@@ -1,1 +1,2 @@
-./src/server.js
+require('./src/server.js');
+console.log(__dirname);
