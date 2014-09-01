@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<meta charset="utf-8">
-		<title>Heraclitus's blog</title>
+		<title>{{page_title}}</title>
 		<meta name="generator" content="Bootply" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<link href="css/bootstrap.min.css" rel="stylesheet">
@@ -23,7 +23,7 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="/">Heraclitus's blog</a>
+			<a class="navbar-brand" href="/">A fun blog</a>
 		</div>
 		<div class="collapse navbar-collapse">
 			<div class="btn-toolbar nav navbar-nav" role="toolbar">
@@ -44,9 +44,21 @@
 </div>
 
 <div class="container main-container">
-{{#compiled-articles}}
-	{{{.}}}
-{{/compiled-articles}}
+	{{#articles}}
+	<div class="post">
+		<h1><a href="title/{{{url_encode title}}}">{{title}}</a></h1>
+		<div class="byline">{{date}}, by {{author}}</div>
+		<div class="tags">
+		{{#tags}}
+<a class="btn btn-default" href="tags/{{{url_encode this}}}">{{this}}</a>
+		{{/tags}}
+		</div>
+		<p class="main-body">
+			{{{body}}}
+		</p>
+	</div><!-- class="post" -->
+	<hr />
+	{{/articles}}
 </div><!-- class="container" -->
 
 	<!-- script references -->
