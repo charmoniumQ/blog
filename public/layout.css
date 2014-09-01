@@ -1,0 +1,28 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+.main-container {
+	width: 70%;
+}
+.navbar > .container {
+	width: 100%;
+}
+.byline, .tags {
+	color: #7A7A7A;
+	font-size: 12pt;
+	margin-bottom: 5px;
+	margin-left: 0px;
+}
+.main-body {
+	margin-top: 15px;
+	line-height: 140%;
+	font-size: 13pt;
+	font-family: 'Open Sans', sans-serif;
+}
+.post {
+	margin-bottom: 55px;
+}
+.tags > .btn {
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}

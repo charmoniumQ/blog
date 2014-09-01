@@ -1,0 +1,15 @@
+{{#posts}}
+	<div class="post">
+		<h1>{{title}}</h1>
+		<div class="byline">{{date}}, by {{author}}</div>
+		<div class="tags">
+		{{#tags}}
+			<a class="btn btn-default" href="tags/{{.}}">{{.}}</a>
+		{{/tags}}
+		</div>
+		<p class="main-body">
+			{{{body}}}
+		</p>
+	</div><!-- class="post" -->
+	<hr />
+{{/posts}}
