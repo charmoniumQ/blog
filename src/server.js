@@ -7,8 +7,10 @@ var express = require('express');
 
 var app = express();
 
-require('./routing')(app)
+require('./routing')(app);
 
-var server = app.listen(3000, function() {
-    console.log('Listening on port %d', server.address().port);
+var port = Number(process.env.PORT || 5000);
+var server = app.listen(port, function() {
+	log.info('Listening on port ' + port);
+
 });
