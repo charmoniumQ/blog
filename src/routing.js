@@ -5,7 +5,7 @@ var bunyan = require('bunyan');
 
 var log = bunyan.createLogger({name: 'myapp', src: true});
 var router = express.Router();
-log.level('debug');
+log.level('info');
 
 router.get('/', function (req, res) {
 	log.info('routing to front page');

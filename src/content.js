@@ -4,7 +4,7 @@ var database = require('./database');
 var bunyan = require('bunyan');
 
 var log = bunyan.createLogger({name: 'myapp', src: true});
-log.level('debug');
+log.level('info');
 
 handlebars.registerHelper('url_encode', function (text) {
 	return encodeURI(text).replace(/%5B/g, '[').replace(/%5D/g, ']');
