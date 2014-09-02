@@ -15,7 +15,7 @@ process.on('uncaughtException', function(err) {
 
 require('./routing')(app)
 
-PORT = 80;
-var server = app.listen(PORT, function() {
-	log.info('Listening on port ' + PORT);
+var port = Number(process.env.PORT || 5000);
+var server = app.listen(port, function() {
+	log.info('Listening on port ' + port);
 });
