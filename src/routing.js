@@ -1,12 +1,15 @@
 var express = require('express');
 var content = require('./content');
 var database = require('./database');
+var bunyan = require('bunyan');
 
+var log = bunyan.createLogger({name: 'myapp', src: true});
 var router = express.Router();
-
-
+log.level('trace');
 
 router.get('/', function (req, res) {
+	log.info('routing to front page');
+	log.debug('database state', database.test());
 	content.frontPage(res);
 });
 
@@ -16,9 +19,8 @@ router.get('/about', function (req, res) {
 });
 
 router.get('/tags/:tag', function (req, res) {
-//	console.log('routing ' + req.url + ' to /tags/:tag');
-//	database.test();
-//	console.log();
+	log.info('routing ' + req.url + ' to /tags/:tag tag=' + req.params.tag);
+	log.debug('database state', database.test());
 	content.tag(res, req.params.tag);
 });
 
@@ -45,9 +47,8 @@ router.get('/title/', function(req, res) {
 
 module.exports = function (app) {
 	app.use(function(req, res, next){
-		console.log('%s %s', req.method, req.url);
-		database.test();
-		console.log();
+		log.info(req.method + ' ' + req.url);
+		log.debug('database state', database.test());
 		next();
 	});
 	app.use(express.static('./public'));

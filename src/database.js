@@ -1,12 +1,16 @@
 var fs = require("fs");
+var bunyan = require('bunyan');
+
+var log = bunyan.createLogger({name: 'myapp', src: true});
+log.level('trace');
 
 Array.prototype.contains = function(element){
     return this.indexOf(element) > -1;
 };
 
-Array.prototype.clone = function() {
-	return this.slice(0);
-};
+Object.prototype.clone = function() {
+	return JSON.parse(JSON.stringify(this));
+}
 
 var articleInfos = {
 	  "titles": []
@@ -30,6 +34,16 @@ for (var i = 0; i < fileList.length; i++) {
 	articleInfos.bodies.push(articleJSON.body);
 }
 
+function test() {
+	thing = {
+		  'articleInfos': articleInfos
+		, 'articles': articles
+	};
+	return thing.clone();
+}
+
+module.exports.test = test;
+
 module.exports.getTags = function () {
 	uniqueTags = []
 	for (var i = 0; i < articleInfos.tags.length; i++) {
@@ -39,33 +53,23 @@ module.exports.getTags = function () {
 			}
 		}
 	}
-	test();
+	log.debug('database state', test());
 	return uniqueTags.clone();
 };
 
-function test() {
-	console.log(articleInfos.titles + ' ' + articles.length);
-}
-
-module.exports.test = test;
-
 module.exports.getAll = function() {
-	console.log('getAll():');
-	test();
-	console.log();
+	log.debug('database state', test());
 	return articles.clone();
 };
 
 module.exports.getTag = function(tag) {
-	console.log('getTag(' + tag + '):');
-	test();
+	log.debug('database state', test());
 	articlesWithTag = []
 	for (var i = 0; i < articleInfos.tags.length; i++) {
 		if (articleInfos.tags[i].contains(tag)) {
 			articlesWithTag.push(articles[i]);
 		}
 	}
-	test();
-	console.log();
+	log.debug('database state', test());
 	return articlesWithTag.clone();
 };
