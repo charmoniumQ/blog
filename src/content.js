@@ -1,15 +1,25 @@
 var fs = require('fs');
 var handlebars = require('handlebars');
 var database = require('./database');
+var bunyan = require('bunyan');
+
+var log = bunyan.createLogger({name: 'myapp', src: true});
+log.level('info');
 
 handlebars.registerHelper('url_encode', function (text) {
 	return encodeURI(text).replace(/%5B/g, '[').replace(/%5D/g, ']');
 });
 
-var mainSource = fs.readFileSync('./views/main_template.html', 'utf8');
-var mainTemplate = handlebars.compile(mainSource);
+var mainSource, mainTemplate;
+try {
+	mainSource = fs.readFileSync('./views/main_template.html', 'utf8');
+	mainTemplate = handlebars.compile(mainSource);
+} catch (err) {
+	log.error(err);
+}
 
 function return404(res) {
+	log.warn('404 error');
 	res.writeHead(404, {"Content-Type": "text/plain"});
 	res.write("404 Not Found\n");
 	res.end();
