@@ -3,7 +3,7 @@ var bunyan = require('bunyan');
 
 var log = bunyan.createLogger({name: 'myapp', src: true});
 var app = express();
-log.level('trace');
+log.level('info');
 
 // TODO:
 //   Error handling

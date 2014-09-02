@@ -2,7 +2,7 @@ var fs = require("fs");
 var bunyan = require('bunyan');
 
 var log = bunyan.createLogger({name: 'myapp', src: true});
-log.level('trace');
+log.level('debug');
 
 Array.prototype.contains = function(element){
     return this.indexOf(element) > -1;
