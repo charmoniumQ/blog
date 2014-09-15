@@ -1,16 +1,9 @@
 var fs = require("fs");
 var bunyan = require('bunyan');
+var _ = require('lodash');
 
 var log = bunyan.createLogger({name: 'myapp', src: true});
 log.level('info');
-
-Array.prototype.contains = function(element){
-    return this.indexOf(element) > -1;
-};
-
-Object.prototype.clone = function() {
-	return JSON.parse(JSON.stringify(this));
-}
 
 var articleInfos = {
 	  "titles": []
@@ -18,53 +11,59 @@ var articleInfos = {
 	, "authors": []
 	, "tags": []
 	, "bodies": []
-}
-articles = []
+};
+articles = [];
 
 var fileList = fs.readdirSync('./data/');
-for (var i = 0; i < fileList.length; i++) {
-	var articleString = fs.readFileSync('./data/' + fileList[i], 'utf8');
+_.forEach(fileList, function (file) {
+	var articleString = fs.readFileSync('./data/' + file, 'utf8');
 	var articleJSON = JSON.parse(articleString);
 	articles.push(articleJSON);
+});
 
-	articleInfos.titles.push(articleJSON.title);
-	articleInfos.dates.push(articleJSON.date);
-	articleInfos.authors.push(articleJSON.author);
-	articleInfos.tags.push(articleJSON.tags);
-	articleInfos.bodies.push(articleJSON.body);
-}
+articles.sort(function (a, b) {
+	return a.date < b.date; // lex sort on date puts newest articles first
+});
+
+_.forEach(articles, function(article) {
+	articleInfos.titles.push(article.title);
+	articleInfos.dates.push(article.date);
+	articleInfos.authors.push(article.author);
+	articleInfos.tags.push(article.tags);
+	articleInfos.bodies.push(article.body);
+});
 
 function test() {
 	thing = {
 		  'articleInfos': articleInfos
 		, 'articles': articles
 	};
-	return thing.clone();
+	return _.cloneDeep(thing);
 }
 
 module.exports.test = test;
 
 module.exports.getTags = function () {
-	uniqueTags = []
-	for (var i = 0; i < articleInfos.tags.length; i++) {
-		for (var j = 0; j < articleInfos.tags[i].length; j++) {
-			if (! uniqueTags.contains(articleInfos.tags[i][j])) {
+	uniqueTags = [];
+	_.forEach(articleInfos.tags, function (tagList) {
+		_.forEach(tagList, function (tag) {
+			if (_.contains(uniqueTags, tag)) {
 				uniqueTags.push(articleInfos.tags[i][j]);
 			}
-		}
-	}
+		});
+	});
 	log.debug('database state', test());
 	return uniqueTags.clone();
 };
 
 module.exports.getAll = function() {
 	log.debug('database state', test());
-	return articles.clone();
+	return _.cloneDeep(articles);
 };
 
 module.exports.getTag = function(tag) {
 	log.debug('database state', test());
-	articlesWithTag = []
+	articlesWithTag = [];
 	for (var i = 0; i < articleInfos.tags.length; i++) {
 		if (articleInfos.tags[i].contains(tag)) {
 			articlesWithTag.push(articles[i]);
