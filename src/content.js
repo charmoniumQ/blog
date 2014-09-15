@@ -29,7 +29,7 @@ function returnArticles(res, articles) {
 	templateData = {
 		  'page_title': 'My blog'
 		, 'articles': articles
-	}
+	};
 	mainRendered = mainTemplate(templateData);
 
 	res.writeHeader(200, {"Content-Type": "text/html"});

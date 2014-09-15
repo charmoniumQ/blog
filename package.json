@@ -7,5 +7,6 @@
 		, "handlebars": "*"
 		, "consolidate": "*"
 		, "bunyan": "*"
+		, "lodash": "*"
 	}
 }
