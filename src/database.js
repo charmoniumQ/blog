@@ -16,9 +16,15 @@ articles = [];
 
 var fileList = fs.readdirSync('./data/');
 _.forEach(fileList, function (file) {
-	var articleString = fs.readFileSync('./data/' + file, 'utf8');
-	var articleJSON = JSON.parse(articleString);
-	articles.push(articleJSON);
+	if (file.indexOf('json') > -1) {
+		var articleString = fs.readFileSync('./data/' + file, 'utf8');
+		var articleJSON = JSON.parse(articleString);
+		if (articleJSON.file) {
+			articleJSON.body = fs.readFileSync('./data/' + articleJSON.file,
+											   'utf8');
+		}
+		articles.push(articleJSON);
+	}
 });
 
 articles.sort(function (a, b) {
