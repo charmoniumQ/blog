@@ -1,0 +1,41 @@
+<p>I have to use spice for Digital Electronics class. The class is based on people using coolspice. That is a windows only product. My windows is too slow to be usable. Here is my guide on how to use spice on debian/ubuntu</p>
+
+<p>First, install geda and ngspice from the debian repo.
+<!-- HTML generated using hilite.me --><div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888">sudo apt-get install geda ngspice</span>
+</pre></div>
+</p>
+
+<p>Now let's start using it. Open up gschem through any application launcher. Look around. This program is heavily based on keyboard shortcuts. You can get to everything through the menu-bar at the top or the context-menu, but the keyboard is much more efficient. Press <code>I</code> to insert components, <code>F S</code> to save.</p>
+
+<p>To insert a power-source, use <code>vdc-1.sym</code>. This inserts a spice-specific power-source. You need to insert a ground <code>gnd-1.sym</code> as well. Here is an  <a href="http://wiki.geda-project.org/geda:ngspice_and_gschem">example</a>.</p>
+
+<p>You should give every component a unique name. Double-click the component (or press <code>E E</code> if the component is selected), and change the <code>refdes</code> field (keep the first letter the same, because the first letter indicates what component it is to spice). Add a  <code>value</code> field to describe the device. Consult <a href="http://www.brorson.com/gEDA/SPICE/x631.html">this</a> chart for whot to put in the value field. To name a wire, add a <code>netname</code>.</p>
+
+<p>Now for spice, you may add spice directives one-by-one with <code>spice-directive-1.sym</code>. What I normally do is have all of my spice directives in a file and include the file with <code>spice-include-1.sym</code>. Mine usually defines any external models I am using, defines a simulation, and a creates control section that executes during the simulation. Here is a sample.
+<!-- HTML generated using hilite.me --><div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">.include .<span style="color: #666666">/</span>MOSIS.txt
+.tran <span style="color: #666666">2</span>p <span style="color: #666666">5</span>n
+.options TEMP<span style="color: #666666">=125</span>
+.save v(Vout)
+.save v(Vin)
+.control
+run 
+plot vin vout
+meas tran tperiod TRIG V(Vin)  val<span style="color: #666666">=0.5</span>  rise<span style="color: #666666">=1</span> targ V(Vin)  val<span style="color: #666666">=0.5</span>  rise<span style="color: #666666">=2</span>
+meas tran trise   TRIG V(Vout) val<span style="color: #666666">=0.18</span> rise<span style="color: #666666">=1</span> targ V(Vout) val<span style="color: #666666">=1.62</span> rise<span style="color: #666666">=1</span>
+meas tran tfall   TRIG V(Vout) val<span style="color: #666666">=1.62</span> fall<span style="color: #666666">=1</span> targ V(Vout) val<span style="color: #666666">=0.18</span> fall<span style="color: #666666">=1</span>
+meas tran tphl    TRIG V(Vin)  val<span style="color: #666666">=0.9</span>  rise<span style="color: #666666">=2</span> targ V(Vout) val<span style="color: #666666">=0.9</span> fall<span style="color: #666666">=2</span>
+meas tran tplh    TRIG V(Vin)  val<span style="color: #666666">=0.9</span>  fall<span style="color: #666666">=1</span> targ V(Vout) val<span style="color: #666666">=0.9</span> rise<span style="color: #666666">=1</span>
+.endc 
+</pre></div>
+</p>
+
+<p>Once you have built your circuit, you need to compile it to a spice net-list. Go into terminal and do.
+<!-- HTML generated using hilite.me --><div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888">gnetlist -g spice-sdb -O sort_mode -o OUTPUT.net INPUT.sch</span>
+<span style="color: #888888">cat OUTPUT.net</span>
+</pre></div>
+If you know how to read spice netlists, then make sure this is valid before continuing.</p>
+
+<p>Then, launch ngspice with your the netlist as input. ngspice should run whatever simulation you defined.
+<!-- HTML generated using hilite.me --><div style="background: #f8f8f8; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888">ngspice OUTPUT.net</span>
+</pre></div>
+</p>
