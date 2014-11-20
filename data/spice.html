@@ -1,0 +1,151 @@
+<h3>Making a prepocesser for spice</h3>
+
+<p>
+SPICE is painful to use, since it was designed for punch cards. The
+most difficult part is duplicating circuit elements. It would be really nice if
+there was some preprocessor language that I could write loops in. Why not use
+ruby?
+</p>
+
+<p>
+Ruby is a scripting language used for web development. People have designed a
+way to use Ruby for templating HTML files, and it is really good at
+that. (Templating an HTML file means substituting data in a premade
+template). This is not that different from templating a SPICE file.
+</p>
+
+<p>
+Lets say we want to chain 5 10-ohm resistors together. Instead of writing
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">R1 0 1 10
+R2 1 2 10
+R3 2 3 10
+R4 3 4 10
+R5 4 5 10
+</pre></div>
+
+We can write some Embedded Ruby (aka eRuby). Read more about eRuby <a href="http://en.wikipedia.org/wiki/ERuby">here</a>
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #557799">%</span> max <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">4</span>
+<span style="color: #557799">%</span> <span style="color: #008800; font-weight: bold">for</span> n <span style="color: #008800; font-weight: bold">in</span> <span style="color: #0000DD; font-weight: bold">0</span><span style="color: #333333">.</span>.max <span style="color: #008800; font-weight: bold">do</span>
+<span style="color: #557799">&lt;%=</span>   <span style="background-color: #fff0f0">&quot;R</span><span style="background-color: #eeeeee">#{</span>n <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span><span style="background-color: #eeeeee">}</span><span style="background-color: #fff0f0"> </span><span style="background-color: #eeeeee">#{</span>n<span style="background-color: #eeeeee">}</span><span style="background-color: #fff0f0"> </span><span style="background-color: #eeeeee">#{</span>n <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span><span style="background-color: #eeeeee">}</span><span style="background-color: #fff0f0"> 10&quot;</span> <span style="color: #557799">%&gt;</span>
+<span style="color: #557799">%</span> <span style="color: #008800; font-weight: bold">end</span>
+</pre></div>
+</p>
+
+<p>
+First, I created a for-loop, then inside the body of the loop, ruby evaluates
+the linethat begins with <span style="font-family:'Courier New', Courier, monospace">&lt;%=</span> (this line looks different because
+it is an output line).This simplifies repeated code a lot because it allows us to write loops. This code is what I used to create the
+ring oscilator. To run the code, install ERB and then do "erb file_name | ngspice"
+</p>
+
+<p>
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #557799">%</span> wp <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&#39;5.5u&#39;</span>
+<span style="color: #557799">%</span> wn <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&#39;2.25u&#39;</span>
+<span style="color: #557799">%</span> <span style="color: #008800; font-weight: bold">for</span> n <span style="color: #008800; font-weight: bold">in</span> <span style="color: #0000DD; font-weight: bold">0</span><span style="color: #333333">.</span>.<span style="color: #0000DD; font-weight: bold">5</span>
+<span style="color: #557799">%</span>     m <span style="color: #333333">=</span> (n <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">1</span>) <span style="color: #333333">%</span> <span style="color: #0000DD; font-weight: bold">5</span>
+<span style="color: #557799">&lt;%=</span>   <span style="background-color: #fff0f0">&quot;XNOT</span><span style="background-color: #eeeeee">#{</span>n<span style="background-color: #eeeeee">}</span><span style="background-color: #fff0f0">  n</span><span style="background-color: #eeeeee">#{</span>m<span style="background-color: #eeeeee">}</span><span style="background-color: #fff0f0"> n</span><span style="background-color: #eeeeee">#{</span>n<span style="background-color: #eeeeee">}</span><span style="background-color: #fff0f0"> inv wp=</span><span style="background-color: #eeeeee">#{</span>wp<span style="background-color: #eeeeee">}</span><span style="background-color: #fff0f0"> wn=</span><span style="background-color: #eeeeee">#{</span>wn<span style="background-color: #eeeeee">}</span><span style="background-color: #fff0f0">&quot;</span> <span style="color: #557799">%&gt;</span>
+<span style="color: #557799">&lt;%=</span>   <span style="background-color: #fff0f0">&quot;C</span><span style="background-color: #eeeeee">#{</span>n<span style="background-color: #eeeeee">}</span><span style="background-color: #fff0f0">      0 n</span><span style="background-color: #eeeeee">#{</span>n<span style="background-color: #eeeeee">}</span><span style="background-color: #fff0f0"> 100f&quot;</span> <span style="color: #557799">%&gt;</span>
+<span style="color: #557799">%</span> <span style="color: #008800; font-weight: bold">end</span>
+</pre></div>
+</p>
+
+<h3>Script for guessing input values that produce the write outpu</h3>
+
+<p>
+But first I had to send input to SPICE. For that I use python format
+strings. In my netlist, I have these two lines:
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">xbuf0 buf_in buf_mid inv wp={p[0]:f}u wn={p[1]:f}u
+xbuf1 buf_mid buf_out inv wp={p[2]:f}u wn={p[3]:f}u
+</pre></div>
+
+If you interpret that as
+a <a href="https://docs.python.org/2/library/string.html#format-examples">python
+format string</a>, it needs a 4-long array called 'p' to satisfy the values. So
+I also need to parse the output of SPICE. I want to read the file as a string,
+then create a function that takes a python array that specifies the width
+parameters, then put those values in the string, write the string to a file,
+then run SPICE on that file, then capture the output.
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">subprocess</span>
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">numpy</span> <span style="color: #008800; font-weight: bold">import</span> <span style="color: #333333">*</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">re</span>
+
+<span style="color: #008800; font-weight: bold">with</span> <span style="color: #007020">open</span>(<span style="background-color: #fff0f0">&#39;nand.net&#39;</span>, <span style="background-color: #fff0f0">&#39;r&#39;</span>) <span style="color: #008800; font-weight: bold">as</span> f:
+    source <span style="color: #333333">=</span> f<span style="color: #333333">.</span>read()
+
+TMP_NAME <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&#39;tmp.net&#39;</span>
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">test</span>(p, v<span style="color: #333333">=</span><span style="color: #007020">False</span>):
+    <span style="color: #008800; font-weight: bold">with</span> <span style="color: #007020">open</span>(TMP_NAME, <span style="background-color: #fff0f0">&#39;w+&#39;</span>) <span style="color: #008800; font-weight: bold">as</span> f:
+        f<span style="color: #333333">.</span>write(source<span style="color: #333333">.</span>format(<span style="color: #333333">**</span><span style="color: #007020">locals</span>()))
+        f<span style="color: #333333">.</span>flush()
+    p <span style="color: #333333">=</span> subprocess<span style="color: #333333">.</span>Popen([<span style="background-color: #fff0f0">&#39;ngspice&#39;</span>, TMP_NAME], stdin<span style="color: #333333">=</span>subprocess<span style="color: #333333">.</span>PIPE, stdout<span style="color: #333333">=</span>subprocess<span style="color: #333333">.</span>PIPE, stderr<span style="color: #333333">=</span>subprocess<span style="color: #333333">.</span>PIPE)
+    out <span style="color: #333333">=</span> p<span style="color: #333333">.</span>communicate(<span style="color: #007020">input</span><span style="color: #333333">=</span><span style="background-color: #fff0f0">&#39;exit&#39;</span>)[<span style="color: #0000DD; font-weight: bold">0</span>]
+    a <span style="color: #333333">=</span> re<span style="color: #333333">.</span>findall(<span style="background-color: #fff0f0">r&#39;tplh_b1af *?=  ([\d\.\-e]*)&#39;</span>, out)[<span style="color: #0000DD; font-weight: bold">0</span>]
+    b <span style="color: #333333">=</span> re<span style="color: #333333">.</span>findall(<span style="background-color: #fff0f0">r&#39;tphl_b1ar *?=  ([\d\.\-e]*)&#39;</span>, out)[<span style="color: #0000DD; font-weight: bold">0</span>]
+    c <span style="color: #333333">=</span> re<span style="color: #333333">.</span>findall(<span style="background-color: #fff0f0">r&#39;tphl_a1br *?=  ([\d\.\-e]*)&#39;</span>, out)[<span style="color: #0000DD; font-weight: bold">0</span>]
+    d <span style="color: #333333">=</span> re<span style="color: #333333">.</span>findall(<span style="background-color: #fff0f0">r&#39;tplh_a1bf *?=  ([\d\.\-e]*)&#39;</span>, out)[<span style="color: #0000DD; font-weight: bold">0</span>]
+    t <span style="color: #333333">=</span> array([a, b, c, d], dtype<span style="color: #333333">=</span>float128)
+    <span style="color: #008800; font-weight: bold">return</span> t
+</pre></div>
+
+This completely abstracts dealing with the actual SPICE away. This function is
+like a black box that takes in numbers and returns a numpy array with the
+times. None of the other funcitons care what goes on inside. (The one exception
+is for cleanup, we must delete the temporary file.)
+</p>
+
+<p>
+Now I can write another function that will run gradient descent on the first one.
+
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">scipy.optimize</span> <span style="color: #008800; font-weight: bold">import</span> minimize, show_options
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">cost</span>(p, v<span style="color: #333333">=</span><span style="color: #007020">False</span>):
+    <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">sum</span>((test(p, v)[<span style="color: #0000DD; font-weight: bold">2</span>:] <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">2</span>)<span style="color: #333333">**</span><span style="color: #0000DD; font-weight: bold">2</span>)
+
+<span style="color: #008800; font-weight: bold">if</span> __name__ <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&#39;__main__&#39;</span>:
+    x0 <span style="color: #333333">=</span> array([<span style="color: #0000DD; font-weight: bold">2</span>], dtype<span style="color: #333333">=</span>float128)
+    res <span style="color: #333333">=</span> minimize(cost, x0, args<span style="color: #333333">=</span>(<span style="color: #007020">True</span>,), method<span style="color: #333333">=</span><span style="background-color: #fff0f0">&#39;Nelder-Mead&#39;</span>, options<span style="color: #333333">=</span><span style="color: #007020">dict</span>(maxiter<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">160</span>))
+    <span style="color: #008800; font-weight: bold">print</span> (res)
+    os<span style="color: #333333">.</span>remove(TMP_NAME)
+</pre></div>
+
+This code uses a canned gradient descent function from scipy. I tried different
+algorithms, and Nelder-Mead seems to work the best. The cost surface isn't
+always well behaved (crazy things happen in the simulation every now and then),
+and running each iteration takes about 0.05 seconds, so we can't always arrive
+at the optimal answer, but it does decently.
+</p>
+
+<p>
+The complete script is available <a href="http://pastebin.com/9bLGg6m3">here</a> and the netlist is <a href="http://pastebin.com/v4X1MKcp">here</a>. You will need to
+have numpy and scipy installed to run them.
+</p>
+
+<h3>The big idea with SPICE</h3>
+
+<p>
+If you are grading this blog, this paragraph is probably what you are looking
+for. SPICE is a low level simulator. It finds the voltage for descrete
+components. In SPICE, you care about propagation delays and rise times. Logisim
+is a higher level. It doesn't care what the underlying voltage is, as long as
+the components recognize it as a 1 or a 0. It doesn't care what the propagation
+delay or rise time is, as long as the gates flips reasonably fast. SPICE is a
+circuit level simulator. Logisim is a logic level simulator.
+</p>
+
+<p>
+It seems like this course is built on abstractions. We start out with resistors
+and batteries. Then we abstract the battery to be an ideal voltage source,
+wires to be resistors with 0 resistance, and transistors to be 'switchable'
+resistors. Then we put transistors in a logic gate and deal with just gates
+(first as subcircuits in SPICE, then as components in Logisim). We might build
+a simple CPU out of the logic gates, and ignore the specific gates (go up a
+layer of abstraction). Then we might program the CPU in assembly and ignore the
+circuit part of the CPU (another layer of abstraction), so that we go all the
+way from resistors and batteries to assembly language, and on each step of the
+way, we encounter a new abstraction.
+</p>
