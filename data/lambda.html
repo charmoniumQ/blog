@@ -1,0 +1,76 @@
+<p>
+Work on Manateams (the grade scraping program) has been slow. You can see my progress <a href="https://github.com/project-manatee/manatee-chrome">here</a>.I have been working on refactoring the code to make it more encapsualted. Right now, all of the functionality is sort of mixed together in source code. I am trying to seperate it into logical units.
+</p>
+<p>
+I saw this on the board
+<pre>
+APCS Challenge of the Week:
+Figure out how to use lambda functions in Java 7.
+</pre>
+I am not in APCS, nevertheless I will explain how to write lambdas in Java 7 and Java 8. It soudns more interesting than my project.
+</p>
+<p>
+A Lambda expression is like an insta-function. It instantly creates a function usually to do a small task where writing a real function would be too verbose.
+If I say $f(x) = x^2$, I made a function called $f$. Another way of writing this is $f = \lambda x. x^2$.
+</p>
+<p>
+Let say I want to have a function that square a number. I could make a static method. This is analagous to $f(x) = x^2; f(10)$
+</p>
+<pre><code class="language-java">public class Test {
+	public static double f(double x) {
+		return Math.pow(x, 2);
+	}
+	public static void main(String args[]) {
+		System.out.println(f(10.0));
+	}
+}
+</code></pre>
+<p>
+Or I could make a lambda function (Java 7 style) by creating a one-use throw-away function. This is analagous to $(\lambda x.x^2)(10)$. The function isn't even given a name.
+</p>
+<pre><code class="language-java">public class Test {
+	interface Function<A, R> {
+		public R run(A argument);
+	}
+
+	public static void main(String args[]) {
+		System.out.println(
+			new Function<Double, Double>() {
+				public Double run(Double argument) {
+					return Math.pow(argument, 2);
+				}
+			}.run(10.0)
+		);
+	}
+}
+</code></pre>
+<p>
+The nice thing about this is that I can pass a function to a function. Java has an array sorter built in. If I want to sort arrays full of objects that Java doesn't know how to compare, I have to tell Java how to compare them. I do that by passing in a 'comperator'.
+</p>
+<pre><code class="language-java">Collections.sort(chairs, new Comparator<Chair>() {
+	public int compare(Chair chair1, Chair chair2) {
+		// tell Java how to compare two Chairs.
+		...
+		// returns -1 if less than, 0 if equal, 1 if greater than
+	}
+});
+</code></pre>
+<p>
+<p>See more examples of comperators  <a href="http://stackoverflow.com/a/2784747/1078199">here</a>.
+</p>
+<p>
+Java 7 syntax doesn't directly let us make lambda-functions. Instead we make anonymous classes that have a method which acts like a function. This makes lambdas sort of inconvenient (remember the whole point of lambda expressions is that they can be more concise than a static method in some cases). Java 8 fixes this by implementing lambdas directly.
+<pre><code class="language-java">public class Test {
+	public static void main(String args[]) {
+		System.out.println(
+			(x -> Math.pow(x, 2))(10.0)
+	 	);
+	}
+}
+// This code is untested
+// I am certain it works, but getting JDK 8 on Debian is time-consuming
+// and I still have lots of English homework to do.
+</code></pre>
+<p>
+This is much easier to use and it approximates $(\lambda x.x^2)(10)$ much better. Read more about lambda functions <a href="http://en.wikipedia.org/wiki/Anonymous_function">here</a>.
+</p>
